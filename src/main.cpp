@@ -1,49 +1,31 @@
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <thread>
 #include <chrono>
 #include <string>
+#include "pacman.h"
+#include "tile.h"
 
 int main () {
+    //28x31
 
-    std::string map[] = {
-        "XXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-        "X............XX............X",
-        "X.XXXX.XXXXX.XX.XXXXX.XXXX.X",
-        "X.XXXX.XXXXX.XX.XXXXX.XXXX.X",
-        "X.XXXX.XXXXX.XX.XXXXX.XXXX.X",
-        "X..........................X",
-        "X.XXXX.XX.XXXXXXXX.XX.XXXX.X",
-        "X.XXXX.XX.XXXXXXXX.XX.XXXX.X",
-        "X......XX....XX....XX......X",
-        "XXXXXX.XXXXX.XX.XXXXX.XXXXXX",
-        "     X.XXXXX.XX.XXXXX.X     ",
-        "     X.XX..........XX.X     ",
-        "     X.XX.XXX  XXX.XX.X     ",
-        "XXXXXX.XX.X      X.XX.XXXXXX",
-        "..........X      X..........",
-        "XXXXXX.XX.X      X.XX.XXXXXX",
-        "     X.XX.XXXXXXXX.XX.X     ",
-        "     X.XX..........XX.X     ",
-        "     X.XX.XXXXXXXX.XX.X     ",
-        "XXXXXX.XX.XXXXXXXX.XX.XXXXXX",
-        "X............XX............X",
-        "X.XXXX.XXXXX.XX.XXXXX.XXXX.X",
-        "X.XXXX.XXXXX.XX.XXXXX.XXXX.X",
-        "X...XX................XX...X",
-        "XXX.XX.XX.XXXXXXXX.XX.XX.XXX",
-        "XXX.XX.XX.XXXXXXXX.XX.XX.XXX",
-        "X......XX....XX....XX......X",
-        "X.XXXXXXXXXX.XX.XXXXXXXXXX.X",
-        "X.XXXXXXXXXX.XX.XXXXXXXXXX.X",
-        "X..........................X",
-        "XXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-    };
+    Tile arr[28][31];
+
+    assignTiles(arr);
 
     const int IPS = 60;
     std::chrono::milliseconds iDuration(1000 / IPS);
 
-    sf::RenderWindow window(sf::VideoMode(800, 800), "pacman");
+    sf::RenderWindow window(sf::VideoMode(28 * 32, 31 * 32), "pacman");
+
+    sf::RectangleShape pacman;
+
+    pacman.setSize(sf::Vector2f(32, 32));
+    pacman.setPosition(sf::Vector2f(14 * 32, 23 * 32));
+    pacman.setFillColor(sf::Color::Yellow);
+    
+    int currentDirection = 0;
 
     while(window.isOpen()){
         auto startTime = std::chrono::high_resolution_clock::now();
@@ -53,7 +35,14 @@ int main () {
                 window.close();
             }
         }
+        int nextDirection = getInput();
         window.clear();
+        for(int i = 0; i < 28; i++){
+            for(int j = 0; j < 31; j++){
+                window.draw(arr[i][j].rect);
+            }
+        }
+        window.draw(pacman);
         window.display();
 
         auto endTime = std::chrono::high_resolution_clock::now();
