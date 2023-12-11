@@ -58,9 +58,125 @@ int getInput(){
     return direction;
 }
 
-void movePacman(int& currentDirection, int nextDirection, sf::RectangleShape& pacman){
-    
-    //TODO udelat pohyb pomoci move metody a testovat pri tom kolize
-    //TODO potom az to bude, udelat fluid movement pomoci jiny funkce a testovat jestli tam je, pokud tam bude, pouzit tuhle funkci
+void movePacman(int& currentDirection, int nextDirection, sf::RectangleShape& pacman, Tile (&arr)[28][31], sf::Vector2i& pacmanPos){
 
+    static bool isThere = true;
+    static int movementProgression = 0;
+    static int countPorting = 0;
+
+    if(countPorting == 0){
+        if(pacmanPos.x < 0){
+            pacmanPos.x = 28;
+            pacman.setPosition(sf::Vector2f(28 * 32, pacman.getPosition().y));
+            countPorting++;
+        }
+        else if(pacmanPos.x > 27){
+            pacmanPos.x = -1;
+            pacman.setPosition(sf::Vector2f(-1 * 32, pacman.getPosition().y));
+            countPorting++;
+        }
+    }
+    else if(countPorting == 18){
+        countPorting = 0;
+    }
+    else{
+        countPorting++;
+    }
+
+    if(isThere){
+        switch(nextDirection){
+            case 1:
+                if(!arr[pacmanPos.x][pacmanPos.y - 1].isWall){
+                    currentDirection = nextDirection;
+                }
+                break;
+            case 2:
+                if(!arr[pacmanPos.x][pacmanPos.y + 1].isWall){
+                    currentDirection = nextDirection;
+                }
+                break;
+            case 3:
+                if(!arr[pacmanPos.x - 1][pacmanPos.y].isWall){
+                    currentDirection = nextDirection;
+                }
+                break;
+            case 4:
+                if(!arr[pacmanPos.x + 1][pacmanPos.y].isWall){
+                    currentDirection = nextDirection;
+                }
+                break;
+            default:
+                break;
+        }
+        isThere = false;
+        switch(currentDirection){
+            case 1:
+                if(arr[pacmanPos.x][pacmanPos.y - 1].isWall){
+                    isThere = true;
+                    currentDirection = 0;
+                }
+                break;
+            case 2:
+                if(arr[pacmanPos.x][pacmanPos.y + 1].isWall){
+                    isThere = true;
+                    currentDirection = 0;
+                }
+                break;
+            case 3:
+                if(arr[pacmanPos.x - 1][pacmanPos.y].isWall){
+                    isThere = true;
+                    currentDirection = 0;
+                }
+                break;
+            case 4:
+                if(arr[pacmanPos.x + 1][pacmanPos.y].isWall){
+                    isThere = true;
+                    currentDirection = 0;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    else{
+        if(movementProgression == 8){
+            movementProgression = 0;
+            isThere = true;
+            switch(currentDirection){
+                case 1:
+                    pacmanPos.y--;
+                    break;
+                case 2:
+                    pacmanPos.y++;
+                    break;
+                case 3:
+                    pacmanPos.x--;
+                    break;
+                case 4:
+                    pacmanPos.x++;
+                    break;
+                default:
+                    break;
+            }
+        }
+        else{
+            movementProgression++;
+            switch(currentDirection){
+                case 1:
+                    pacman.move(sf::Vector2f(0, -4));
+                    break;
+                case 2:
+                    pacman.move(sf::Vector2f(0, 4));
+                    break;
+                case 3:
+                    pacman.move(sf::Vector2f(-4, 0));
+                    break;
+                case 4:
+                    pacman.move(sf::Vector2f(4, 0));
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 }

@@ -1,4 +1,5 @@
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <thread>
@@ -23,10 +24,10 @@ int main () {
 
     pacman.setSize(sf::Vector2f(32, 32));
     pacman.setPosition(sf::Vector2f(14 * 32, 23 * 32));
+    sf::Vector2i pacmanPos = sf::Vector2i(14, 23);
     pacman.setFillColor(sf::Color::Yellow);
     
     int currentDirection = 0;
-
     while(window.isOpen()){
         auto startTime = std::chrono::high_resolution_clock::now();
         sf::Event event;
@@ -36,6 +37,7 @@ int main () {
             }
         }
         int nextDirection = getInput();
+        movePacman(currentDirection, nextDirection, pacman, arr, pacmanPos);
         window.clear();
         for(int i = 0; i < 28; i++){
             for(int j = 0; j < 31; j++){
